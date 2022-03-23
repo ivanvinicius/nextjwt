@@ -1,6 +1,12 @@
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import Router from 'next/router'
-import { setCookie } from 'nookies'
+import { setCookie, parseCookies } from 'nookies'
 
 import { api } from '../services/api'
 
@@ -32,6 +38,21 @@ export function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUserData>({} as IUserData)
   const isAuthenticated = !!user
 
+  useEffect(() => {
+    async function loadUserInfo() {
+      const { 'nextjwt.token': token } = parseCookies()
+
+      if (token) {
+        const response = await api.get('/me')
+        const { email, permissions, roles } = response.data
+
+        setUser({ email, permissions, roles })
+      }
+    }
+
+    loadUserInfo()
+  }, [])
+
   async function SignIn({ email, password }: ICredentialsProps): Promise<void> {
     try {
       const response = await api.post('/sessions', { email, password })
@@ -47,6 +68,13 @@ export function AuthProvider({ children }: IAuthProviderProps) {
         maxAge: TIME_IN_DAYS,
         path: '/'
       })
+
+      /** When we sign in to application for the first time, the headers['Authorization']
+       * located in services/api are not setted yet. So, if we access the dashboard
+       * page and make an API request, it will throw an error of 'token not present'.
+       * To correct this behavior, after we sign in to application, we can set the
+       * api.default.headers as showned below */
+      api.defaults.headers['Authorization'] = `Bearer ${token}`
 
       setUser({ email, permissions, roles })
 

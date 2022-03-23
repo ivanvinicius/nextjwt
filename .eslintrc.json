@@ -36,6 +36,7 @@
 		"@typescript-eslint/no-explicit-any": "off",
 		"multiline-ternary": "off",
 		"no-return-await": "warn",
+		"dot-notation": "off",
 		
 		"react/self-closing-comp": ["error", {
 			"component": true,
