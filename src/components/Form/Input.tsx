@@ -27,6 +27,7 @@ export function Input({ name, placeholder, icon, ...rest }: IInputBaseProps) {
     >
       <Icon as={icon} fontSize="22" color="gray.200" />
       <ChakraInput
+        {...rest}
         id={name}
         name={name}
         type="text"
@@ -35,7 +36,6 @@ export function Input({ name, placeholder, icon, ...rest }: IInputBaseProps) {
         px="4"
         mr="4"
         placeholder={placeholder}
-        {...rest}
         _placeholder={{
           color: 'gray.400'
         }}
