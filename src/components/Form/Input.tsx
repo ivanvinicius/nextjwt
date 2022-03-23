@@ -30,7 +30,6 @@ export function Input({ name, placeholder, icon, ...rest }: IInputBaseProps) {
         {...rest}
         id={name}
         name={name}
-        type="text"
         color="gray.50"
         variant="unstyled"
         px="4"
