@@ -69,7 +69,7 @@ export function AuthProvider({ children }: IAuthProviderProps) {
 
       Router.push('/dashboard')
     } catch (err) {
-      console.log(err)
+      console.log('signin err: ', err)
     }
   }
 

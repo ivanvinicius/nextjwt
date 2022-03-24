@@ -4,7 +4,9 @@ import {
   GetServerSidePropsContext,
   GetServerSidePropsResult
 } from 'next'
-import { parseCookies } from 'nookies'
+import { destroyCookie, parseCookies } from 'nookies'
+
+import { AuthTokenError } from '../errors/AuthTokenError'
 
 type SSPCtx = GetServerSidePropsContext
 
@@ -22,6 +24,20 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>): GetServerSideProps {
       }
     }
 
-    return fn(ctx)
+    try {
+      return await fn(ctx)
+    } catch (err) {
+      if (err instanceof AuthTokenError) {
+        destroyCookie(ctx, 'nextjwt.token')
+        destroyCookie(ctx, 'nextjwt.refreshToken')
+
+        return {
+          redirect: {
+            permanent: false,
+            destination: '/'
+          }
+        }
+      }
+    }
   }
 }

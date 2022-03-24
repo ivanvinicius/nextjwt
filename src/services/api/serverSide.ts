@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { parseCookies, setCookie } from 'nookies'
 
+import { AuthTokenError } from '../../errors/AuthTokenError'
 import { SignOut } from '../../utils/signOut'
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
@@ -65,15 +66,12 @@ export function serverSideApi(ctx = undefined) {
                 failedRequestsQueue = []
               })
               .catch((err) => {
-                console.log(err.config)
+                console.log('err.config: ', err.config)
 
                 failedRequestsQueue.forEach((request) => request.onFailure(err))
 
                 failedRequestsQueue = []
 
-                /** To avoid an error thar occour when a request to api is made by
-                 * server side rendering, Router browser does not exists yet and
-                 * throw an error */
                 if (typeof window !== 'undefined') {
                   SignOut()
                 }
@@ -104,6 +102,8 @@ export function serverSideApi(ctx = undefined) {
            * throw an error */
           if (typeof window !== 'undefined') {
             SignOut()
+          } else {
+            return Promise.reject(new AuthTokenError())
           }
         }
       }
