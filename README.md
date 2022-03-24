@@ -20,6 +20,8 @@
 
 <div align="center">
   <img src="github/images/nextjwt-signin.png" alt="Sign In">    
+  <img src="github/images/nextjwt-dashboard.png" alt="Sign In">    
+  <img src="github/images/nextjwt-metrics.png" alt="Sign In">    
 </div>
 
 ## Sobre o projeto
@@ -35,6 +37,8 @@ As principais tecnologias utilizadas na construção deste projeto foram:
 * [Next.js](https://nextjs.org/)
 * [Chakra UI](https://chakra-ui.com/guides/getting-started/nextjs-guide)
 * [JWT](https://jwt.io/)
+* [Axios](https://axios-http.com/docs/intro)
+* [Nookies](https://github.com/maticzav/nookies)
 
 ## Instalação e utilização
 

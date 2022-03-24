@@ -1,8 +1,13 @@
 import { Flex, Heading as ChakraHeading, Text } from '@chakra-ui/react'
+import Head from 'next/head'
 
 export function Heading() {
   return (
     <Flex align="center" justify="center" direction="column">
+      <Head>
+        <title>Next JWT | Sign in</title>
+      </Head>
+
       <ChakraHeading letterSpacing={-4} color="cyan">
         Next JWT
       </ChakraHeading>

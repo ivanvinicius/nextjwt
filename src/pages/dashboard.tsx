@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { RiBarChartHorizontalLine } from 'react-icons/ri'
+import Head from 'next/head'
 
 import { Can } from '../components/Can'
 import { serverSideApi } from '../services/api/serverSide'
@@ -21,6 +22,10 @@ export default function Dashboard() {
 
   return (
     <Flex flex="1" flexDirection="column">
+      <Head>
+        <title>Next JWT | Dashboard</title>
+      </Head>
+
       <Header />
 
       <Flex mt="8" flexDirection="column" alignItems="center">

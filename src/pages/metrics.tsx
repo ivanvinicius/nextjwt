@@ -1,6 +1,7 @@
 import { Flex, Heading, Box, Text, Button, Icon } from '@chakra-ui/react'
 import Link from 'next/link'
 import { RiArrowLeftLine } from 'react-icons/ri'
+import Head from 'next/head'
 
 import { Header } from '../components/Header'
 import { serverSideApi } from '../services/api/serverSide'
@@ -9,6 +10,10 @@ import { withSSRAuth } from '../utils/withSSRAuth'
 export default function Metrics() {
   return (
     <Flex flex="1" flexDirection="column">
+      <Head>
+        <title>Next JWT | Metrics</title>
+      </Head>
+
       <Header />
 
       <Flex mt="8" flexDirection="column" alignItems="center">
