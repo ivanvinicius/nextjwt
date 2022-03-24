@@ -6,11 +6,9 @@ import {
   useState
 } from 'react'
 import Router from 'next/router'
-import { setCookie, parseCookies } from 'nookies'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 
 import { clientSideApi } from '../services/api/clientSide'
-import { SignOut } from '../utils/signOut'
-
 interface IUserData {
   email: string
   roles: ['administrator' | 'editor']
@@ -29,11 +27,23 @@ interface ICredentialsProps {
 interface IAuthContextData {
   isAuthenticated: boolean
   user: IUserData
-  SignIn(credentials: ICredentialsProps): Promise<void>
+  SignIn: (credentials: ICredentialsProps) => Promise<void>
+  SignOut: () => void
 }
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
 const AuthContext = createContext({} as IAuthContextData)
+
+let authChannel: BroadcastChannel
+
+export function SignOut() {
+  destroyCookie(undefined, 'nextjwt.token')
+  destroyCookie(undefined, 'nextjwt.refreshToken')
+
+  authChannel.postMessage('signOut')
+
+  Router.push('/')
+}
 
 export function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUserData>({} as IUserData)
@@ -92,8 +102,22 @@ export function AuthProvider({ children }: IAuthProviderProps) {
     loadUserInfo()
   }, [])
 
+  useEffect(() => {
+    authChannel = new BroadcastChannel('auth')
+
+    authChannel.onmessage = (message) => {
+      switch (message.data) {
+        case 'signOut':
+          SignOut()
+          break
+        default:
+          break
+      }
+    }
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, SignIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, SignIn, SignOut }}>
       {children}
     </AuthContext.Provider>
   )

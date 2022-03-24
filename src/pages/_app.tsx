@@ -1,15 +1,15 @@
 import { AppProps } from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
 
-import { AppProvider } from '../contexts'
+import { AuthProvider } from '../contexts/Auth'
 import { theme } from '../styles/theme'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AppProvider>
+    <AuthProvider>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>
-    </AppProvider>
+    </AuthProvider>
   )
 }

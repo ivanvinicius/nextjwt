@@ -1,74 +1,113 @@
 import {
   Flex,
   Heading,
-  VStack,
-  Divider,
   Box,
   Text,
-  Link as ChakraLink
+  Button,
+  Icon,
+  HStack
 } from '@chakra-ui/react'
 import Link from 'next/link'
+import { RiBarChartHorizontalLine } from 'react-icons/ri'
 
 import { Can } from '../components/Can'
 import { serverSideApi } from '../services/api/serverSide'
 import { useAuth } from '../contexts/Auth'
 import { withSSRAuth } from '../utils/withSSRAuth'
+import { Header } from '../components/Header'
 
 export default function Dashboard() {
   const { user } = useAuth()
 
   return (
-    <Flex
-      flex="1"
-      h="100vh"
-      alignItems="center"
-      justifyContent="center"
-      flexDir="column"
-    >
-      <Heading color="cyan" letterSpacing={-3}>
-        Dashboard
-      </Heading>
+    <Flex flex="1" flexDirection="column">
+      <Header />
 
-      <Can permissions={['metrics.list']}>
-        <VStack mt="16">
-          <Text fontWeight="bold" size="sm" color="cyan">
-            E-mail
-          </Text>
-          <p>{user.email}</p>
+      <Flex mt="8" flexDirection="column" alignItems="center">
+        <Flex
+          p="8"
+          borderRadius={8}
+          width="100%"
+          maxWidth="1120"
+          justifyContent="center"
+          flexDirection="column"
+          bg="gray.800"
+        >
+          <Heading size="md" color="cyan">
+            Welcome to Dashboard page
+          </Heading>
 
-          <Divider color="gray.500" />
-
-          <Text fontWeight="bold" size="sm" color="cyan">
-            Permissions
-          </Text>
-          {user.permissions?.map((permission) => (
-            <p key={permission}>{permission}</p>
-          ))}
-
-          <Divider color="gray.500" />
-
-          <Text fontWeight="bold" size="sm" color="cyan">
-            Role
-          </Text>
-          {user.roles?.map((role) => (
-            <p key={role}>{role}</p>
-          ))}
-        </VStack>
-
-        <Flex mt="16" flexDirection="column">
-          <Text size="sm" textAlign="center">
-            if you are an administrator and have metrics.list permisson,
-            <br />
-            access the Metrics page clicking on the link below
+          <Text mt="4" color="gray.200">
+            This is a public page which everyone have access.
           </Text>
 
-          <Box mt="8" alignSelf="center">
-            <Link href="/metrics">
-              <ChakraLink color="orange.400">Metrics</ChakraLink>
-            </Link>
-          </Box>
+          <Box mt="8" borderBottom="1px" borderColor="gray.700" />
+
+          <HStack
+            mt="8"
+            spacing="8"
+            alignItems="start"
+            justifyContent="space-between"
+          >
+            <Box width="250px">
+              <Heading size="sm" mb="2" color="cyan">
+                E-mail
+              </Heading>
+
+              <Text color="gray.200">{user.email}</Text>
+            </Box>
+            <Box width="250px">
+              <Heading size="sm" mb="2" color="cyan">
+                Role
+              </Heading>
+
+              {user.roles?.map((role) => (
+                <Text color="gray.200" key={role}>
+                  {role}
+                </Text>
+              ))}
+            </Box>
+            <Box width="250px">
+              <Heading size="sm" mb="2" color="cyan">
+                Permissions
+              </Heading>
+
+              {user.permissions?.map((permission) => (
+                <Text color="gray.200" key={permission}>
+                  {permission}
+                </Text>
+              ))}
+            </Box>
+          </HStack>
+
+          <Can permissions={['metrics.list']} roles={['administrator']}>
+            <Box mt="8" borderBottom="1px" borderColor="gray.700" />
+
+            <Box mt="8">
+              <Text color="red.500">
+                Administrator role, and list metrics permission are required to
+                access the Metrics.
+              </Text>
+
+              <Link href="/metrics">
+                <Button
+                  as="a"
+                  mt="4"
+                  height="56px"
+                  px="26"
+                  borderRadius="full"
+                  colorScheme="cyan"
+                  rightIcon={
+                    <Icon as={RiBarChartHorizontalLine} fontSize="22" />
+                  }
+                >
+                  Metrics
+                </Button>
+              </Link>
+            </Box>
+          </Can>
         </Flex>
-      </Can>
+      </Flex>
     </Flex>
   )
 }

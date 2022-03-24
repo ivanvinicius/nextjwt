@@ -9,7 +9,6 @@ export function SignInButton({ ...rest }: ISighInButtonProps) {
       {...rest}
       mt="8"
       colorScheme="cyan"
-      color="white"
       size="lg"
       borderRadius="full"
       height="56px"

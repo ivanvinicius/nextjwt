@@ -25,7 +25,7 @@ export function Input({ name, placeholder, icon, ...rest }: IInputBaseProps) {
       borderRadius="full"
       height="56px"
     >
-      <Icon as={icon} fontSize="22" color="gray.200" />
+      <Icon as={icon} fontSize="22" color="gray.400" />
       <ChakraInput
         {...rest}
         id={name}
