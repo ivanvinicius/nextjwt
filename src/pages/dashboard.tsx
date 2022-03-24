@@ -1,30 +1,11 @@
 import { Flex, Heading, VStack, Divider } from '@chakra-ui/react'
-import { parseCookies } from 'nookies'
-import { useEffect } from 'react'
 
+import { serverSideApi } from '../services/api/serverSide'
 import { useAuth } from '../contexts/Auth'
-import { api } from '../services/api'
 import { withSSRAuth } from '../utils/withSSRAuth'
 
 export default function Dashboard() {
   const { user } = useAuth()
-
-  useEffect(() => {
-    async function loadUserInfo() {
-      const { 'nextjwt.token': token } = parseCookies()
-
-      if (token) {
-        try {
-          await api.get('/me')
-        } catch (err) {
-          console.log('DASHBOARD/ME REQ ERROR', err)
-        }
-      }
-    }
-
-    loadUserInfo()
-  }, [])
-
   return (
     <Flex
       flex="1"
@@ -65,7 +46,12 @@ export default function Dashboard() {
   )
 }
 
-export const getServerSideProps = withSSRAuth(async () => {
+export const getServerSideProps = withSSRAuth(async (ctx) => {
+  const api = serverSideApi(ctx)
+  const response = await api.get('/me')
+
+  console.log(response.data)
+
   return {
     props: {}
   }

@@ -8,7 +8,7 @@ import {
 import Router from 'next/router'
 import { setCookie, parseCookies } from 'nookies'
 
-import { api } from '../services/api'
+import { clientSideApi } from '../services/api/clientSide'
 import { SignOut } from '../utils/signOut'
 
 interface IUserData {
@@ -41,7 +41,10 @@ export function AuthProvider({ children }: IAuthProviderProps) {
 
   async function SignIn({ email, password }: ICredentialsProps): Promise<void> {
     try {
-      const response = await api.post('/sessions', { email, password })
+      const response = await clientSideApi.post('/sessions', {
+        email,
+        password
+      })
 
       const { token, refreshToken, permissions, roles } = response.data
 
@@ -60,7 +63,7 @@ export function AuthProvider({ children }: IAuthProviderProps) {
        * page and make an API request, it will throw an error of 'token not present'.
        * To correct this behavior, after we sign in to application, we can set the
        * api.default.headers as showned below */
-      api.defaults.headers['Authorization'] = `Bearer ${token}`
+      clientSideApi.defaults.headers['Authorization'] = `Bearer ${token}`
 
       setUser({ email, permissions, roles })
 
@@ -76,7 +79,7 @@ export function AuthProvider({ children }: IAuthProviderProps) {
 
       if (token) {
         try {
-          const response = await api.get('/me')
+          const response = await clientSideApi.get('/me')
           const { email, permissions, roles } = response.data
 
           setUser({ email, permissions, roles })
