@@ -1,5 +1,6 @@
-import { RefreshTokensStore, UsersStore } from "./types"
 import { v4 as uuid } from 'uuid'
+
+import { RefreshTokensStore, UsersStore } from './types'
 
 export const users: UsersStore = new Map()
 
@@ -25,17 +26,20 @@ export function createRefreshToken(email: string) {
 
   tokens.set(email, [...currentUserTokens, refreshToken])
 
-  return refreshToken;
+  return refreshToken
 }
 
 export function checkRefreshTokenIsValid(email: string, refreshToken: string) {
   const storedRefreshTokens = tokens.get(email) ?? []
 
-  return storedRefreshTokens.some(token => token === refreshToken)
+  return storedRefreshTokens.some((token) => token === refreshToken)
 }
 
 export function invalidateRefreshToken(email: string, refreshToken: string) {
   const storedRefreshTokens = tokens.get(email) ?? []
 
-  tokens.set(email, storedRefreshTokens.filter(token => token !== refreshToken));
+  tokens.set(
+    email,
+    storedRefreshTokens.filter((token) => token !== refreshToken)
+  )
 }

@@ -13,8 +13,8 @@ import { SignOut } from '../utils/signOut'
 
 interface IUserData {
   email: string
-  permissions: string[]
-  roles: string[]
+  roles: ['administrator' | 'editor']
+  permissions: ['users.list' | 'users.create' | 'metrics.list']
 }
 
 interface IAuthProviderProps {

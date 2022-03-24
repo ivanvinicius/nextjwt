@@ -9,7 +9,7 @@ export function generateJwtAndRefreshToken(
 ) {
   const token = jwt.sign(payload, auth.secret, {
     subject: email,
-    expiresIn: 7 // sec
+    expiresIn: 60 * 15 // 15 min
   })
 
   const refreshToken = createRefreshToken(email)
