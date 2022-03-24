@@ -6,9 +6,10 @@ import {
   useState
 } from 'react'
 import Router from 'next/router'
-import { setCookie, parseCookies, destroyCookie } from 'nookies'
+import { setCookie, parseCookies } from 'nookies'
 
 import { api } from '../services/api'
+import { SignOut } from '../utils/signOut'
 
 interface IUserData {
   email: string
@@ -29,7 +30,6 @@ interface IAuthContextData {
   isAuthenticated: boolean
   user: IUserData
   SignIn(credentials: ICredentialsProps): Promise<void>
-  SignOut(): void
 }
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
@@ -38,13 +38,6 @@ const AuthContext = createContext({} as IAuthContextData)
 export function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUserData>({} as IUserData)
   const isAuthenticated = !!user
-
-  function SignOut() {
-    destroyCookie(undefined, 'nextjwt.token')
-    destroyCookie(undefined, 'nextjwt.refreshToken')
-
-    Router.push('/')
-  }
 
   async function SignIn({ email, password }: ICredentialsProps): Promise<void> {
     try {
@@ -97,7 +90,7 @@ export function AuthProvider({ children }: IAuthProviderProps) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, SignOut, SignIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, SignIn }}>
       {children}
     </AuthContext.Provider>
   )

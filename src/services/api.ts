@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
-import Router from 'next/router'
-import { destroyCookie, parseCookies, setCookie } from 'nookies'
+import { parseCookies, setCookie } from 'nookies'
+
+import { SignOut } from '../utils/signOut'
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
 
@@ -60,9 +61,18 @@ api.interceptors.response.use(
               failedRequestsQueue = []
             })
             .catch((err) => {
+              console.log(err.config)
+
               failedRequestsQueue.forEach((request) => request.onFailure(err))
 
               failedRequestsQueue = []
+
+              /** To avoid an error thar occour when a request to api is made by
+               * server side rendering, Router browser does not exists yet and
+               * throw an error */
+              if (typeof window !== 'undefined') {
+                SignOut()
+              }
             })
             .finally(() => {
               isRefreshingToken = false
@@ -85,10 +95,12 @@ api.interceptors.response.use(
           })
         })
       } else {
-        destroyCookie(undefined, 'nextjwt.token')
-        destroyCookie(undefined, 'nextjwt.refreshToken')
-
-        Router.push('/')
+        /** To avoid an error thar occour when a request to api is made by
+         * server side redering, Router browser does not exists yet and
+         * throw an error */
+        if (typeof window !== 'undefined') {
+          SignOut()
+        }
       }
     }
 

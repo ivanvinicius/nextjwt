@@ -9,6 +9,7 @@ import { SignInButton } from '../components/Form/SignInButton'
 import { Footer } from '../components/Form/Footer'
 import { Container } from '../components/Form/Container'
 import { useAuth } from '../contexts/Auth'
+import { withSSRGuest } from '../utils/withSSRGuest'
 
 export default function SignIn() {
   const { SignIn } = useAuth()
@@ -52,3 +53,9 @@ export default function SignIn() {
     </Container>
   )
 }
+
+export const getServerSideProps = withSSRGuest(async () => {
+  return {
+    props: {}
+  }
+})
