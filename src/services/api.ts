@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios'
-import { parseCookies, setCookie } from 'nookies'
+import Router from 'next/router'
+import { destroyCookie, parseCookies, setCookie } from 'nookies'
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
+
 let cookies = parseCookies()
 let isRefreshingToken = false
 let failedRequestsQueue = []
@@ -83,8 +85,13 @@ api.interceptors.response.use(
           })
         })
       } else {
-        // logout
+        destroyCookie(undefined, 'nextjwt.token')
+        destroyCookie(undefined, 'nextjwt.refreshToken')
+
+        Router.push('/')
       }
     }
+
+    return Promise.reject(error)
   }
 )

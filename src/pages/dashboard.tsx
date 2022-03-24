@@ -1,9 +1,28 @@
 import { Flex, Heading, VStack, Divider } from '@chakra-ui/react'
+import { parseCookies } from 'nookies'
+import { useEffect } from 'react'
 
 import { useAuth } from '../contexts/Auth'
+import { api } from '../services/api'
 
 export default function Dashboard() {
   const { user } = useAuth()
+
+  useEffect(() => {
+    async function loadUserInfo() {
+      const { 'nextjwt.token': token } = parseCookies()
+
+      if (token) {
+        try {
+          await api.get('/me')
+        } catch (err) {
+          console.log('DASHBOARD/ME REQ ERROR', err)
+        }
+      }
+    }
+
+    loadUserInfo()
+  }, [])
 
   return (
     <Flex

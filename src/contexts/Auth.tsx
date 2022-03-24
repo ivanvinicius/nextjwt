@@ -6,7 +6,7 @@ import {
   useState
 } from 'react'
 import Router from 'next/router'
-import { setCookie, parseCookies } from 'nookies'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 
 import { api } from '../services/api'
 
@@ -29,6 +29,7 @@ interface IAuthContextData {
   isAuthenticated: boolean
   user: IUserData
   SignIn(credentials: ICredentialsProps): Promise<void>
+  SignOut(): void
 }
 
 const TIME_IN_DAYS = 60 * 60 * 24 * 30 // 30 days
@@ -38,20 +39,12 @@ export function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUserData>({} as IUserData)
   const isAuthenticated = !!user
 
-  useEffect(() => {
-    async function loadUserInfo() {
-      const { 'nextjwt.token': token } = parseCookies()
+  function SignOut() {
+    destroyCookie(undefined, 'nextjwt.token')
+    destroyCookie(undefined, 'nextjwt.refreshToken')
 
-      if (token) {
-        const response = await api.get('/me')
-        const { email, permissions, roles } = response.data
-
-        setUser({ email, permissions, roles })
-      }
-    }
-
-    loadUserInfo()
-  }, [])
+    Router.push('/')
+  }
 
   async function SignIn({ email, password }: ICredentialsProps): Promise<void> {
     try {
@@ -84,8 +77,27 @@ export function AuthProvider({ children }: IAuthProviderProps) {
     }
   }
 
+  useEffect(() => {
+    async function loadUserInfo() {
+      const { 'nextjwt.token': token } = parseCookies()
+
+      if (token) {
+        try {
+          const response = await api.get('/me')
+          const { email, permissions, roles } = response.data
+
+          setUser({ email, permissions, roles })
+        } catch (err) {
+          SignOut()
+        }
+      }
+    }
+
+    loadUserInfo()
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, SignIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, SignOut, SignIn }}>
       {children}
     </AuthContext.Provider>
   )
